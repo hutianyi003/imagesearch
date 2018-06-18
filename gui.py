@@ -8,6 +8,7 @@ import json
 datapath = './data/'
 imagepath = './image/' 
 needtosearch = ''
+fastmode = True
 
 def imageShow():
     default_dir = r'/Users/'
@@ -62,7 +63,8 @@ with open("config.json", "r") as f:
         exit()
     imagepath = config["imagedir"]
     datapath = config["datadir"]
-    src.search.config(imagepath, datapath)
+    fastmode = config["fastmode"]
+    src.search.config(imagepath, datapath, fastmode)
 
 root=Tk(className="图像检索")
 
