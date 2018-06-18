@@ -33,7 +33,7 @@ def getfeature(filename):
     feature = np.array([])
     l = f.readline().split(",")
     for i in range(2048):
-        feature = np.append(feature,[float(l[i])*10000])
+        feature = np.append(feature,[float(l[i])])
     feature_list[filename] = feature
     return feature
 
@@ -59,7 +59,7 @@ def load_filelists():
 
 def load_hash(tag):
     files = file_by_class[get_prefilename(tag)]
-    hash_by_class[tag] = LSHash(5, 2048)
+    hash_by_class[tag] = LSHash(6, 2048)
     table = hash_by_class[tag]
     for i in files:
         table.index(getfeature(datapath+'bottleneck/'+i+'_inception_v3.txt'),i)
@@ -78,7 +78,7 @@ def search(path,searchfile):
     if fastmode:
         if ans not in hash_by_class:
             load_hash(ans)
-        temp = hash_by_class[ans].query(inputfeature, num_results = 50)
+        temp = hash_by_class[ans].query(inputfeature, num_results = 500)
         for i in temp:
             candidate.append((i[0][1], getfeature(datapath + 'bottleneck/' + i[0][1]+'_inception_v3.txt')))
 

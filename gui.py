@@ -76,8 +76,8 @@ Button(root,text='search',command=search,width=5).grid(row=0,column=1)#查询
 Button(root,text='exit',command=quit,width=5).grid(row=0,column=2)#退出
 
 imageMatrix=[]
-for col in range(5):
-    for row in range(1,3):
+for row in range(1,3):
+    for col in range(5):
         canvas=Canvas(root,width=100,height=80)
        # canvas.create_rectangle(2,2,101,80,outline='black')
         imageMatrix.append(canvas)
