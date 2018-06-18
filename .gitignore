@@ -1,2 +1,4 @@
 /data/
 config.json
+.vscode/
+src/__pycache__/

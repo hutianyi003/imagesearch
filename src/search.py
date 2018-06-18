@@ -2,10 +2,12 @@
 find top ten most similar pictures of the input
 '''
 
-import label_image
+import src.label_image as label_image
 import numpy as np
 import os
 import cv2
+import json
+from datasketch import MinHashLSHForest, MinHash
 
 feature_list = dict()
 imagepath = './image/'
@@ -33,29 +35,38 @@ def getfeature(filename):
 def distance(v1, v2):
     return np.linalg.norm(v1-v2)
     
-class_feature = dict()
-def search(path,filename):
-    global class_feature
-    ans = label_image.getlabel(path+filename)
-    inputfeature = label_image.computefeature(path+filename)
-    path = imagepath+ans+"/"
-    result = []
-    for file in class_feature[ans]:
-        feature = class_feature[ans][file]
-        result.append([file, distance(feature, inputfeature)])
-    result = sorted(result, key = lambda x: x[1])
-    return result[0:10],ans
+def get_prefilename(label):
+    with open(datapath+'label.json', 'r') as f:
+        data = json.load(f)
+        return data['label_to_filepre'][label]
+    return ''
     
-def load_features(path,filelist):
-    global class_feature
-    for i in filelist:
-        feature = label_image.computefeature(path+i)
-        label = label_image.getlabel(path+i)
-        if label not in class_feature:
-            class_feature[label] = dict()
-        class_feature[label][i] = feature
-        
+def search(path,searchfile):
+    ans = label_image.getlabel(searchfile)
+    inputfeature = label_image.computefeature(searchfile)
+    '''
+    m_input = MinHash()
+    m_input.update()
+    '''
 
+    prefilename = get_prefilename(ans)
+
+    candidate = []
+    
+    files = os.listdir(datapath+'bottleneck/')
+    for i in files:
+        sl = i.split('_')
+        if sl[0] == prefilename:
+            candidate.append(
+                (sl[0] + '_' + sl[1], getfeature(datapath + 'bottleneck/' + i)))
+    
+    result=[]
+
+    for i in candidate:
+        result.append([i[0], distance(i[1], inputfeature)])
+    result = sorted(result, key = lambda x: x[1])
+    return result[0:10]
+    
 if __name__ == '__main__':
     path ='tf_files/ProjectTestData/ir/' 
     output_path = 'tf_files/queryresult.txt'
@@ -65,7 +76,6 @@ if __name__ == '__main__':
     for file in os.listdir(path):
         search_list.append((file,int(file.split(".")[0])))
     search_list = sorted(search_list, key = lambda x: x[1])
-    load_features(path,search_list)
     for file in search_list:
         file = file[0]
         r,c = search(path, file)

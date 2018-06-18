@@ -53,11 +53,7 @@ def load_labels(label_file):
     label.append(l.rstrip())
   return label
 
-feature_list = dict()
 def computefeature(file_name):
-  global feature_list
-  if file_name in feature_list:
-    return feature_list[file_name]
   model_file = datapath + "my_retrained_graph.pb"
   input_height = 299
   input_width = 299
@@ -87,7 +83,6 @@ def computefeature(file_name):
     results = sess.run(output_operation.outputs[0],
                       {input_operation.outputs[0]: t})
   results = np.squeeze(results)
-  feature_list[file_name] = results
 
   return results
 

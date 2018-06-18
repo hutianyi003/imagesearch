@@ -7,10 +7,13 @@ import json
 
 datapath = './data/'
 imagepath = './image/' 
+needtosearch = ''
 
 def imageShow():
     default_dir = r'/Users/'
     fname = filedialog.askopenfilename(initialdir = (default_dir))
+    global needtosearch
+    needtosearch = fname
     img=Image.open(fname)
     if img is None:
         return
@@ -28,11 +31,11 @@ def imageShow():
 
 def search():
     #将查询图片名保存在filename里
-    filename = src.search.search('xxx','xxx')
+    filename = src.search.search(imagepath,needtosearch)
     path = imagepath
    
     for index in range(len(filename)):
-        img=Image.open(path+filename[index])
+        img=Image.open(path+filename[index][0])
         if img is None:
             continue
         nheight=img.height
@@ -57,8 +60,6 @@ with open("config.json", "r") as f:
     if "datadir" not in config:
         print("No datadir!")
         exit()
-    global imagepath
-    global datapath
     imagepath = config["imagedir"]
     datapath = config["datadir"]
     src.search.config(imagepath, datapath)
